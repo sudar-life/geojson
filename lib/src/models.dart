@@ -34,10 +34,10 @@ class GeoJsonFeatureCollection {
   }
 
   /// A features collection
-  List<GeoJsonFeature<dynamic>> collection;
+  List<GeoJsonFeature<dynamic>>? collection;
 
   /// The collection name
-  String name;
+  String? name;
 
   /// Serialize to a geojson features collection
   String serialize() {
@@ -45,9 +45,9 @@ class GeoJsonFeatureCollection {
       ..write('{"type": "FeatureCollection", ' +
           (name == null ? '' : '"name": "$name", '))
       ..write('"features": [');
-    for (final feat in collection) {
+    for (final feat in collection!) {
       buffer.write(feat.serialize());
-      if (feat != collection.last) {
+      if (feat != collection!.last) {
         buffer.write(',');
       }
     }
@@ -59,21 +59,21 @@ class GeoJsonFeatureCollection {
 /// A geojson feature
 class GeoJsonFeature<T> {
   /// The type of the feature
-  GeoJsonFeatureType type;
+  GeoJsonFeatureType? type;
 
   /// The feature properties
-  Map<String, dynamic> properties;
+  Map<String, dynamic>? properties;
 
   /// The feature geo data
-  T geometry;
+  T? geometry;
 
   /// The number of [GeoPoint] contained in this feature geometry
   int get length => _length();
 
   /// Serialize to a geojson feature
-  String serialize() {
+  String? serialize() {
     assert(type != null, "The feature type can not be null for serialization");
-    String featStr;
+    String? featStr;
     switch (type) {
       case GeoJsonFeatureType.point:
         final geom = geometry as GeoJsonPoint;
@@ -113,35 +113,35 @@ class GeoJsonFeature<T> {
         break;
       case GeoJsonFeatureType.multipoint:
         final g = geometry as GeoJsonMultiPoint;
-        total = g.geoSerie.geoPoints.length;
+        total = g.geoSerie!.geoPoints!.length;
         break;
       case GeoJsonFeatureType.line:
         final g = geometry as GeoJsonLine;
-        total = g.geoSerie.geoPoints.length;
+        total = g.geoSerie!.geoPoints!.length;
         break;
       case GeoJsonFeatureType.multiline:
         final g = geometry as GeoJsonMultiLine;
-        for (final line in g.lines) {
-          total = total + line.geoSerie.geoPoints.length;
+        for (final line in g.lines!) {
+          total = total + line.geoSerie!.geoPoints!.length;
         }
         break;
       case GeoJsonFeatureType.polygon:
         final g = geometry as GeoJsonPolygon;
-        for (final geoSerie in g.geoSeries) {
-          total = total + geoSerie.geoPoints.length;
+        for (final geoSerie in g.geoSeries!) {
+          total = total + geoSerie.geoPoints!.length;
         }
         break;
       case GeoJsonFeatureType.multipolygon:
         final g = geometry as GeoJsonMultiPolygon;
-        for (final polygon in g.polygons) {
-          for (final geoSerie in polygon.geoSeries) {
-            total = total + geoSerie.geoPoints.length;
+        for (final polygon in g.polygons!) {
+          for (final geoSerie in polygon.geoSeries!) {
+            total = total + geoSerie.geoPoints!.length;
           }
         }
         break;
       case GeoJsonFeatureType.geometryCollection:
         final g = geometry as GeoJsonGeometryCollection;
-        total = g.geometries.length;
+        total = g.geometries!.length;
     }
     return total;
   }
@@ -155,13 +155,13 @@ class GeoJsonGeometryCollection {
   }
 
   /// The geometries
-  List<GeoJsonFeature<dynamic>> geometries;
+  List<GeoJsonFeature<dynamic>?>? geometries;
 
   /// The name of the collection
-  String name;
+  String? name;
 
   /// Add a geometry to the collection
-  void add(GeoJsonFeature<dynamic> geom) => geometries.add(geom);
+  void add(GeoJsonFeature<dynamic> geom) => geometries!.add(geom);
 }
 
 /// A point
@@ -170,18 +170,18 @@ class GeoJsonPoint {
   GeoJsonPoint({this.geoPoint, this.name});
 
   /// The geometry data
-  GeoPoint geoPoint;
+  GeoPoint? geoPoint;
 
   /// The name of the point
-  String name;
+  String? name;
 
   /// Serialize to a geojson feature string
-  String serializeFeature(Map<String, dynamic> properties) {
+  String serializeFeature(Map<String, dynamic>? properties) {
     final p = properties ?? <String, dynamic>{};
     return '{"type":"Feature","properties":${jsonEncode(p)},'
             '"geometry":{"type":"Point",'
             '"coordinates":' +
-        geoPoint.toGeoJsonCoordinatesString() +
+        geoPoint!.toGeoJsonCoordinatesString() +
         '}}';
   }
 }
@@ -192,14 +192,14 @@ class GeoJsonMultiPoint {
   GeoJsonMultiPoint({this.geoSerie, this.name});
 
   /// The geometry data
-  GeoSerie geoSerie;
+  GeoSerie? geoSerie;
 
   /// The name of the point
-  String name;
+  String? name;
 
   /// Serialize to a geojson feature string
-  String serializeFeature(Map<String, dynamic> properties) =>
-      geoSerie.toGeoJsonFeatureString(properties);
+  String serializeFeature(Map<String, dynamic>? properties) =>
+      geoSerie!.toGeoJsonFeatureString(properties);
 }
 
 /// A line
@@ -208,14 +208,14 @@ class GeoJsonLine {
   GeoJsonLine({this.geoSerie, this.name});
 
   /// The geometry data
-  GeoSerie geoSerie;
+  GeoSerie? geoSerie;
 
   /// The name of the line
-  String name;
+  String? name;
 
   /// Serialize to a geojson feature string
-  String serializeFeature(Map<String, dynamic> properties) =>
-      geoSerie.toGeoJsonFeatureString(properties);
+  String serializeFeature(Map<String, dynamic>? properties) =>
+      geoSerie!.toGeoJsonFeatureString(properties);
 }
 
 /// A multiline
@@ -226,15 +226,15 @@ class GeoJsonMultiLine {
   }
 
   /// The geometry data
-  List<GeoJsonLine> lines;
+  List<GeoJsonLine>? lines;
 
   /// The name of the line
-  String name;
+  String? name;
 
   /// Serialize to a geojson feature string
-  String serializeFeature(Map<String, dynamic> properties) {
-    final geoSeries = <GeoSerie>[];
-    for (final line in lines) {
+  String serializeFeature(Map<String, dynamic>? properties) {
+    final geoSeries = <GeoSerie?>[];
+    for (final line in lines!) {
       geoSeries.add(line.geoSerie);
     }
     return _buildGeoJsonFeature(
@@ -250,15 +250,15 @@ class GeoJsonPolygon {
   }
 
   /// The geometry data
-  List<GeoSerie> geoSeries;
+  List<GeoSerie>? geoSeries;
 
   /// The name of the polygon
-  String name;
+  String? name;
 
   /// Serialize to a geojson feature string
-  String serializeFeature(Map<String, dynamic> properties) {
+  String serializeFeature(Map<String, dynamic>? properties) {
     return _buildGeoJsonFeature(
-        geoSeries, "Polygon", properties ?? <String, dynamic>{"name": name});
+        geoSeries!, "Polygon", properties ?? <String, dynamic>{"name": name});
   }
 }
 
@@ -270,13 +270,13 @@ class GeoJsonMultiPolygon {
   }
 
   /// The geometry data
-  List<GeoJsonPolygon> polygons;
+  List<GeoJsonPolygon>? polygons;
 
   /// The name of the multipolygon
-  String name;
+  String? name;
 
   /// Serialize to a geojson feature string
-  String serializeFeature() => _buildMultiGeoJsonFeature(polygons, name);
+  String serializeFeature() => _buildMultiGeoJsonFeature(polygons!, name);
 }
 
 /// The type of search to process
@@ -310,13 +310,13 @@ class GeoJsonQuery {
   }
 
   /// The property to search for
-  final String property;
+  final String? property;
 
   /// The value of the property to search for
   final dynamic value;
 
   /// The type of geometry to search for
-  final GeoJsonFeatureType geometryType;
+  final GeoJsonFeatureType? geometryType;
 
   /// The type of search to process (for strings)
   final GeoSearchType searchType;
@@ -326,10 +326,10 @@ class GeoJsonQuery {
 }
 
 String _buildGeoJsonFeature(
-    List<GeoSerie> geoSeries, String type, Map<String, dynamic> properties) {
+    List<GeoSerie?> geoSeries, String type, Map<String, dynamic> properties) {
   final coordsList = <String>[];
   for (final geoSerie in geoSeries) {
-    coordsList.add(geoSerie.toGeoJsonCoordinatesString());
+    coordsList.add(geoSerie!.toGeoJsonCoordinatesString());
   }
   final coords = '[' + coordsList.join(",") + ']';
   return '{"type":"Feature","properties":${jsonEncode(properties)},'
@@ -339,11 +339,11 @@ String _buildGeoJsonFeature(
       '}}';
 }
 
-String _buildMultiGeoJsonFeature(List<GeoJsonPolygon> polygons, String name) {
+String _buildMultiGeoJsonFeature(List<GeoJsonPolygon> polygons, String? name) {
   final polyList = <String>[];
   for (final polygon in polygons) {
     final coordsList = <String>[];
-    for (final geoSerie in polygon.geoSeries) {
+    for (final geoSerie in polygon.geoSeries!) {
       coordsList.add(geoSerie.toGeoJsonCoordinatesString());
     }
     final pcoords = '[' + coordsList.join(",") + ']';

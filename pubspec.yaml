@@ -5,16 +5,19 @@ homepage: https://github.com/synw/geojson
 version: 0.10.0
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  extra_pedantic: ^1.2.0
-  geodesy: ^0.3.2
-  geopoint: ^0.8.0
-  iso: ^0.3.0
-  meta: ^1.1.8
-  pedantic: ^1.9.2
+  extra_pedantic: ^1.5.0
+  geodesy: ^0.4.0-nullsafety.0
+  geopoint:
+    git:
+      url: git@github.com:sudar-life/geopoint.git
+      ref: feature/null-safety
+
+  iso: ^1.0.0
+  meta: ^1.4.0
+  pedantic: ^1.11.0
 
 dev_dependencies:
-  test: ^1.6.5
-  test_coverage: ^0.4.1
+  test: ^1.17.5

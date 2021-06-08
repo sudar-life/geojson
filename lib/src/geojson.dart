@@ -16,50 +16,50 @@ class GeoJson {
   /// Default constructor
   GeoJson()
       : features = <GeoJsonFeature>[],
-        points = <GeoJsonPoint>[],
-        multipoints = <GeoJsonMultiPoint>[],
-        lines = <GeoJsonLine>[],
-        multilines = <GeoJsonMultiLine>[],
-        polygons = <GeoJsonPolygon>[],
-        multipolygons = <GeoJsonMultiPolygon>[],
+        points = <GeoJsonPoint?>[],
+        multipoints = <GeoJsonMultiPoint?>[],
+        lines = <GeoJsonLine?>[],
+        multilines = <GeoJsonMultiLine?>[],
+        polygons = <GeoJsonPolygon?>[],
+        multipolygons = <GeoJsonMultiPolygon?>[],
         _processedFeaturesController = StreamController<GeoJsonFeature>(),
-        _processedPointsController = StreamController<GeoJsonPoint>(),
-        _processedMultipointsController = StreamController<GeoJsonMultiPoint>(),
-        _processedLinesController = StreamController<GeoJsonLine>(),
-        _processedMultilinesController = StreamController<GeoJsonMultiLine>(),
-        _processedPolygonsController = StreamController<GeoJsonPolygon>(),
+        _processedPointsController = StreamController<GeoJsonPoint?>(),
+        _processedMultipointsController = StreamController<GeoJsonMultiPoint?>(),
+        _processedLinesController = StreamController<GeoJsonLine?>(),
+        _processedMultilinesController = StreamController<GeoJsonMultiLine?>(),
+        _processedPolygonsController = StreamController<GeoJsonPolygon?>(),
         _processedMultipolygonsController =
-            StreamController<GeoJsonMultiPolygon>(),
+            StreamController<GeoJsonMultiPolygon?>(),
         _endSignalController = StreamController<bool>();
 
   /// All the features
   List<GeoJsonFeature> features;
 
   /// All the points
-  List<GeoJsonPoint> points;
+  List<GeoJsonPoint?> points;
 
   /// All the multipoints
-  List<GeoJsonMultiPoint> multipoints;
+  List<GeoJsonMultiPoint?> multipoints;
 
   /// All the lines
-  List<GeoJsonLine> lines;
+  List<GeoJsonLine?> lines;
 
   /// All the multilines
-  List<GeoJsonMultiLine> multilines;
+  List<GeoJsonMultiLine?> multilines;
 
   /// All the polygons
-  List<GeoJsonPolygon> polygons;
+  List<GeoJsonPolygon?> polygons;
 
   /// All the multipolygons
-  List<GeoJsonMultiPolygon> multipolygons;
+  List<GeoJsonMultiPolygon?> multipolygons;
 
   final StreamController<GeoJsonFeature> _processedFeaturesController;
-  final StreamController<GeoJsonPoint> _processedPointsController;
-  final StreamController<GeoJsonMultiPoint> _processedMultipointsController;
-  final StreamController<GeoJsonLine> _processedLinesController;
-  final StreamController<GeoJsonMultiLine> _processedMultilinesController;
-  final StreamController<GeoJsonPolygon> _processedPolygonsController;
-  final StreamController<GeoJsonMultiPolygon> _processedMultipolygonsController;
+  final StreamController<GeoJsonPoint?> _processedPointsController;
+  final StreamController<GeoJsonMultiPoint?> _processedMultipointsController;
+  final StreamController<GeoJsonLine?> _processedLinesController;
+  final StreamController<GeoJsonMultiLine?> _processedMultilinesController;
+  final StreamController<GeoJsonPolygon?> _processedPolygonsController;
+  final StreamController<GeoJsonMultiPolygon?> _processedMultipolygonsController;
   final StreamController<bool> _endSignalController;
 
   /// Stream of features that are coming in as they are parsed
@@ -68,25 +68,25 @@ class GeoJson {
       _processedFeaturesController.stream;
 
   /// Stream of points that are coming in as they are parsed
-  Stream<GeoJsonPoint> get processedPoints => _processedPointsController.stream;
+  Stream<GeoJsonPoint?> get processedPoints => _processedPointsController.stream;
 
   /// Stream of multipoints that are coming in as they are parsed
-  Stream<GeoJsonMultiPoint> get processedMultipoints =>
+  Stream<GeoJsonMultiPoint?> get processedMultipoints =>
       _processedMultipointsController.stream;
 
   /// Stream of lines that are coming in as they are parsed
-  Stream<GeoJsonLine> get processedLines => _processedLinesController.stream;
+  Stream<GeoJsonLine?> get processedLines => _processedLinesController.stream;
 
   /// Stream of multilines that are coming in as they are parsed
-  Stream<GeoJsonMultiLine> get processedMultilines =>
+  Stream<GeoJsonMultiLine?> get processedMultilines =>
       _processedMultilinesController.stream;
 
   /// Stream of polygons that are coming in as they are parsed
-  Stream<GeoJsonPolygon> get processedPolygons =>
+  Stream<GeoJsonPolygon?> get processedPolygons =>
       _processedPolygonsController.stream;
 
   /// Stream of multipolygons that are coming in as they are parsed
-  Stream<GeoJsonMultiPolygon> get processedMultipolygons =>
+  Stream<GeoJsonMultiPolygon?> get processedMultipolygons =>
       _processedMultipolygonsController.stream;
 
   /// The stream indicating that the parsing is finished
@@ -95,9 +95,9 @@ class GeoJson {
 
   /// Parse the data from a file
   Future<void> parseFile(String path,
-      {String nameProperty,
+      {String? nameProperty,
       bool verbose = false,
-      GeoJsonQuery query,
+      GeoJsonQuery? query,
       bool disableStream = false}) async {
     final file = File(path);
     if (!file.existsSync()) {
@@ -121,7 +121,7 @@ class GeoJson {
 
   /// Parse the data
   Future<void> parse(String data,
-          {String nameProperty,
+          {String? nameProperty,
           bool verbose = false,
           bool disableStream = false}) =>
       _parse(data,
@@ -129,53 +129,53 @@ class GeoJson {
           verbose: verbose,
           disableStream: disableStream);
 
-  void _pipeFeature(GeoJsonFeature data, {bool disableStream}) {
+  void _pipeFeature(GeoJsonFeature data, {bool? disableStream}) {
     switch (data.type) {
       case GeoJsonFeatureType.point:
-        final item = data.geometry as GeoJsonPoint;
+        final item = data.geometry as GeoJsonPoint?;
         points.add(item);
-        if (!disableStream) {
+        if (!disableStream!) {
           _processedPointsController.sink.add(item);
         }
         break;
       case GeoJsonFeatureType.multipoint:
-        final item = data.geometry as GeoJsonMultiPoint;
+        final item = data.geometry as GeoJsonMultiPoint?;
         multipoints.add(item);
-        if (!disableStream) {
+        if (!disableStream!) {
           _processedMultipointsController.sink.add(item);
         }
         break;
       case GeoJsonFeatureType.line:
-        final item = data.geometry as GeoJsonLine;
+        final item = data.geometry as GeoJsonLine?;
         lines.add(item);
-        if (!disableStream) {
+        if (!disableStream!) {
           _processedLinesController.sink.add(item);
         }
         break;
       case GeoJsonFeatureType.multiline:
-        final item = data.geometry as GeoJsonMultiLine;
+        final item = data.geometry as GeoJsonMultiLine?;
         multilines.add(item);
-        if (!disableStream) {
+        if (!disableStream!) {
           _processedMultilinesController.sink.add(item);
         }
         break;
       case GeoJsonFeatureType.polygon:
-        final item = data.geometry as GeoJsonPolygon;
+        final item = data.geometry as GeoJsonPolygon?;
         polygons.add(item);
-        if (!disableStream) {
+        if (!disableStream!) {
           _processedPolygonsController.sink.add(item);
         }
         break;
       case GeoJsonFeatureType.multipolygon:
-        final item = data.geometry as GeoJsonMultiPolygon;
+        final item = data.geometry as GeoJsonMultiPolygon?;
         multipolygons.add(item);
-        if (!disableStream) {
+        if (!disableStream!) {
           _processedMultipolygonsController.sink.add(item);
         }
         break;
       case GeoJsonFeatureType.geometryCollection:
     }
-    if (!disableStream) {
+    if (!disableStream!) {
       _processedFeaturesController.sink.add(data);
     }
     features.add(data);
@@ -184,15 +184,15 @@ class GeoJson {
   /// Parse the geojson in the main thread not using any isolate:
   /// necessary for the web
   Future<void> parseInMainThread(String data,
-      {String nameProperty,
-      GeoJsonQuery query,
+      {String? nameProperty,
+      GeoJsonQuery? query,
       bool verbose = false,
       bool disableStream = false}) async {
     final dataToProcess = _DataToProcess(
         data: data, nameProperty: nameProperty, verbose: verbose, query: query);
-    final _feats = StreamController<GeoJsonFeature>();
+    final _feats = StreamController<GeoJsonFeature?>();
     final _sub = _feats.stream.listen((f) {
-      print("FEAT SUB $f / ${f.type}");
+      print("FEAT SUB $f / ${f!.type}");
       _pipeFeature(f, disableStream: disableStream);
     });
     print("Processing");
@@ -203,12 +203,12 @@ class GeoJson {
   }
 
   Future<void> _parse(String data,
-      {String nameProperty,
-      bool verbose,
-      GeoJsonQuery query,
-      bool disableStream}) async {
+      {String? nameProperty,
+      bool? verbose,
+      GeoJsonQuery? query,
+      bool? disableStream}) async {
     final finished = Completer<void>();
-    Iso iso;
+    late Iso iso;
     iso = Iso(_processFeaturesIso, onDataOut: (dynamic data) {
       if (data is GeoJsonFeature) {
         _pipeFeature(data, disableStream: disableStream);
@@ -229,8 +229,8 @@ class GeoJson {
 
   /// Search a [GeoJsonFeature] by prpperty from a file
   Future<void> searchInFile(String path,
-      {@required GeoJsonQuery query,
-      String nameProperty,
+      {required GeoJsonQuery query,
+      String? nameProperty,
       bool verbose = false}) async {
     await parseFile(path,
         nameProperty: nameProperty, verbose: verbose, query: query);
@@ -241,8 +241,8 @@ class GeoJson {
   /// If the string data is not provided the existing features will be used
   /// to search
   Future<void> search(String data,
-      {@required GeoJsonQuery query,
-      String nameProperty,
+      {required GeoJsonQuery query,
+      String? nameProperty,
       bool verbose = false,
       bool disableStream = false}) async {
     if (data == null && features.isEmpty) {
@@ -260,14 +260,14 @@ class GeoJson {
   /// Find all the [GeoJsonPoint] within a certain distance
   /// from a [GeoJsonPoint]
   Future<List<GeoJsonPoint>> geofenceDistance(
-      {@required GeoJsonPoint point,
-      @required List<GeoJsonPoint> points,
-      @required num distance,
+      {required GeoJsonPoint point,
+      required List<GeoJsonPoint> points,
+      required num distance,
       bool disableStream = false,
       bool verbose = false}) async {
     final foundPoints = <GeoJsonPoint>[];
     final finished = Completer<void>();
-    Iso iso;
+    late Iso iso;
     iso = Iso(_geoFenceDistanceRunner, onDataOut: (dynamic data) {
       if (data is GeoJsonPoint) {
         final point = data;
@@ -290,7 +290,7 @@ class GeoJson {
   }
 
   static Future<void> _geoFenceDistanceRunner(IsoRunner iso) async {
-    final args = iso.args;
+    final args = iso.args!;
     final dataToProcess = args[0] as _GeoFenceDistanceToProcess;
     final points = dataToProcess.points;
     final distance = dataToProcess.distance;
@@ -299,7 +299,7 @@ class GeoJson {
     final geodesy = Geodesy();
     for (final p in points) {
       final distanceFromCenter = geodesy.distanceBetweenTwoGeoPoints(
-          point.geoPoint.point, p.geoPoint.point);
+          point.geoPoint!.point, p.geoPoint!.point);
       if (distanceFromCenter <= distance) {
         if (verbose) {
           print("${p.name}");
@@ -313,13 +313,13 @@ class GeoJson {
   /// Find all the [GeoJsonPoint] located in a [GeoJsonPolygon]
   /// from a list of points
   Future<List<GeoJsonPoint>> geofencePolygon(
-      {@required GeoJsonPolygon polygon,
-      @required List<GeoJsonPoint> points,
+      {required GeoJsonPolygon polygon,
+      required List<GeoJsonPoint> points,
       bool disableStream = false,
       bool verbose = false}) async {
     final foundPoints = <GeoJsonPoint>[];
     final finished = Completer<void>();
-    Iso iso;
+    late Iso iso;
     iso = Iso(_geofencePolygonRunner, onDataOut: (dynamic data) {
       if (data is GeoJsonPoint) {
         final point = data;
@@ -342,7 +342,7 @@ class GeoJson {
   }
 
   static Future<void> _geofencePolygonRunner(IsoRunner iso) async {
-    final args = iso.args;
+    final args = iso.args!;
     final dataToProcess = args[0] as _GeoFenceToProcess;
     final points = dataToProcess.points;
     final polygon = dataToProcess.polygon;
@@ -350,9 +350,9 @@ class GeoJson {
     final geodesy = Geodesy();
     final geoFencedPoints = <GeoJsonPoint>[];
     for (final point in points) {
-      for (final geoSerie in polygon.geoSeries) {
+      for (final geoSerie in polygon.geoSeries!) {
         if (geodesy.isGeoPointInPolygon(
-            point.geoPoint.toLatLng(ignoreErrors: true),
+            point.geoPoint!.toLatLng(ignoreErrors: true)!,
             geoSerie.toLatLng(ignoreErrors: true))) {
           if (verbose) {
             print("- ${point.name}");
@@ -377,17 +377,17 @@ class GeoJson {
     _endSignalController.close();
   }
 
-  static GeoJsonFeature _processGeometry(Map<String, dynamic> geometry,
-      Map<String, dynamic> properties, String nameProperty) {
+  static GeoJsonFeature? _processGeometry(Map<String, dynamic> geometry,
+      Map<String, dynamic>? properties, String? nameProperty) {
     final geomType = geometry["type"].toString();
-    GeoJsonFeature feature;
+    GeoJsonFeature? feature;
     switch (geomType) {
       case "GeometryCollection":
         feature = GeoJsonFeature<GeoJsonGeometryCollection>();
         feature.properties = properties;
         feature.type = GeoJsonFeatureType.geometryCollection;
 
-        final geometries = <GeoJsonFeature<dynamic>>[];
+        final geometries = <GeoJsonFeature<dynamic>?>[];
         for (final geom in geometry["geometries"] as List<dynamic>) {
           geometries.add(_processGeometry(
               geom as Map<String, dynamic>, properties, nameProperty));
@@ -450,22 +450,22 @@ class GeoJson {
         feature.geometry = getPoint(
             feature: feature,
             nameProperty: nameProperty,
-            coordinates: geometry["coordinates"] as List<dynamic>);
+            coordinates: geometry["coordinates"] as List<dynamic>?);
         break;
     }
     return feature;
   }
 
   static void _processFeaturesIso(IsoRunner iso) {
-    final args = iso.args;
+    final args = iso.args!;
     final dataToProcess = args[0] as _DataToProcess;
     _processFeatures(iso: iso, dataToProcess: dataToProcess);
   }
 
   static void _processFeatures(
-      {IsoRunner iso,
-      _DataToProcess dataToProcess,
-      StreamSink<GeoJsonFeature> sink}) {
+      {IsoRunner? iso,
+      required _DataToProcess dataToProcess,
+      StreamSink<GeoJsonFeature?>? sink}) {
     if (iso == null) {
       if (dataToProcess == null || sink == null) {
         throw ArgumentError.notNull();
@@ -479,13 +479,13 @@ class GeoJson {
     final feats = decoded["features"] as List<dynamic>;
     for (final dfeature in feats) {
       final feat = dfeature as Map<String, dynamic>;
-      var properties = <String, dynamic>{};
+      Map<String, dynamic>? properties = <String, dynamic>{};
       if (feat.containsKey("properties")) {
-        properties = feat["properties"] as Map<String, dynamic>;
+        properties = feat["properties"] as Map<String, dynamic>?;
       }
       final geometry = feat["geometry"] as Map<String, dynamic>;
       final geomType = geometry["type"].toString();
-      GeoJsonFeature feature;
+      GeoJsonFeature? feature;
       switch (geomType) {
         case "GeometryCollection":
           feature = GeoJsonFeature<GeoJsonGeometryCollection>()
@@ -493,7 +493,7 @@ class GeoJson {
             ..type = GeoJsonFeatureType.geometryCollection
             ..geometry = GeoJsonGeometryCollection();
           if (nameProperty != null) {
-            feature.geometry.name = properties[nameProperty];
+            feature.geometry.name = properties![nameProperty];
           }
           for (final geom in geometry["geometries"]) {
             feature.geometry.add(_processGeometry(
@@ -572,11 +572,11 @@ class GeoJson {
       if (iso != null) {
         iso.send(feature);
       } else {
-        print("FEAT SINK $feature / ${feature.type}");
-        sink.add(feature);
+        print("FEAT SINK $feature / ${feature!.type}");
+        sink!.add(feature);
       }
       if (verbose == true) {
-        print("${feature.type} ${feature.geometry.name} : "
+        print("${feature!.type} ${feature.geometry.name} : "
             "${feature.length} points");
       }
     }
@@ -596,18 +596,18 @@ class GeoJson {
         }
         switch (query.searchType) {
           case GeoSearchType.exact:
-            if (properties[query.property] != value) {
+            if (properties[query.property!] != value) {
               isPropertyOk = false;
             }
             break;
           case GeoSearchType.startsWith:
-            final prop = properties[query.property] as String;
+            final prop = properties[query.property!] as String;
             if (!prop.startsWith(value)) {
               isPropertyOk = false;
             }
             break;
           case GeoSearchType.contains:
-            final prop = properties[query.property] as String;
+            final prop = properties[query.property!] as String;
             if (!prop.contains(value)) {
               isPropertyOk = false;
             }
@@ -621,20 +621,20 @@ class GeoJson {
 
 class _DataToProcess {
   _DataToProcess(
-      {@required this.data,
-      @required this.nameProperty,
-      @required this.verbose,
-      @required this.query});
+      {required this.data,
+      required this.nameProperty,
+      required this.verbose,
+      required this.query});
 
   final String data;
-  final String nameProperty;
-  final bool verbose;
-  final GeoJsonQuery query;
+  final String? nameProperty;
+  final bool? verbose;
+  final GeoJsonQuery? query;
 }
 
 class _GeoFenceToProcess {
   _GeoFenceToProcess(
-      {@required this.points, @required this.polygon, @required this.verbose});
+      {required this.points, required this.polygon, required this.verbose});
 
   final bool verbose;
   final GeoJsonPolygon polygon;
@@ -643,10 +643,10 @@ class _GeoFenceToProcess {
 
 class _GeoFenceDistanceToProcess {
   _GeoFenceDistanceToProcess(
-      {@required this.points,
-      @required this.point,
-      @required this.distance,
-      @required this.verbose});
+      {required this.points,
+      required this.point,
+      required this.distance,
+      required this.verbose});
 
   final bool verbose;
   final num distance;
